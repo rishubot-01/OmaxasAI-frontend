@@ -1,0 +1,935 @@
+
+/* =====================================================
+   OMAXAS AI — SEARCH PAGE
+   File: src/features/search/pages/SearchPage.css
+   ===================================================== */
+
+.omaxas-search-page {
+  --search-bg: #0b0b0d;
+  --search-panel: #141416;
+  --search-panel-hover: #1a1a1e;
+  --search-border: rgba(255, 255, 255, 0.09);
+  --search-border-hover: rgba(167, 139, 250, 0.5);
+  --search-text: #f5f5f7;
+  --search-muted: #a1a1aa;
+  --search-subtle: #777783;
+  --search-purple: #a78bfa;
+  --search-purple-bg: rgba(139, 92, 246, 0.13);
+
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  padding: 34px 30px 50px;
+  overflow-x: hidden;
+  background: var(--search-bg);
+  color: var(--search-text);
+  font-family: inherit;
+}
+
+.omaxas-search-page *,
+.omaxas-search-page *::before,
+.omaxas-search-page *::after {
+  box-sizing: border-box;
+}
+
+.omaxas-search-page button,
+.omaxas-search-page input {
+  font: inherit;
+}
+
+.omaxas-search-page button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.omaxas-search-page button:focus-visible,
+.omaxas-search-page input:focus-visible {
+  outline: 2px solid var(--search-purple);
+  outline-offset: 3px;
+}
+
+.search-page__container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.search-page__header {
+  margin: 0 0 27px;
+}
+
+.search-page__eyebrow {
+  margin: 0 0 9px;
+  color: #b7a0ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.search-page__title {
+  margin: 0;
+  color: var(--search-text);
+  font-size: clamp(30px, 4vw, 39px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.search-page__description {
+  max-width: 620px;
+  margin: 12px 0 0;
+  color: var(--search-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* =====================================================
+   SEARCH FORM
+   ===================================================== */
+
+.search-page__search-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 61px;
+  padding: 7px 8px 7px 16px;
+  border: 1px solid var(--search-border);
+  border-radius: 16px;
+  background: #171719;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.search-page__search-form:focus-within {
+  border-color: var(--search-border-hover);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
+}
+
+.search-page__search-icon {
+  display: block;
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+  color: var(--search-muted);
+}
+
+.search-page__input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 11px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--search-text);
+  font-size: 14px;
+}
+
+.search-page__input::placeholder {
+  color: #777783;
+}
+
+.search-page__input:focus-visible {
+  outline: none;
+}
+
+.search-page__clear-button {
+  flex-shrink: 0;
+  padding: 8px 9px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--search-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.search-page__clear-button:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.search-page__submit-button {
+  flex-shrink: 0;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 11px;
+  background: #7046d7;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.search-page__submit-button:hover:not(:disabled) {
+  background: #8057e9;
+  transform: translateY(-1px);
+}
+
+.search-page__submit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* =====================================================
+   SECTIONS
+   ===================================================== */
+
+.search-page__section {
+  margin-top: 34px;
+}
+
+.search-page__section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 13px;
+  margin-bottom: 15px;
+}
+
+.search-page__heading-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.search-page__heading-label h2,
+.search-page__results-heading h2 {
+  margin: 0;
+  color: #eeeef3;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.search-page__heading-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--search-muted);
+}
+
+.search-page__text-button {
+  flex-shrink: 0;
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+  color: var(--search-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.search-page__text-button:hover {
+  color: #fff;
+}
+
+/* =====================================================
+   RECENT SEARCHES
+   ===================================================== */
+
+.search-page__recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.search-page__recent-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.search-page__recent-row:hover {
+  border-color: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.search-page__recent-search {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+  min-width: 0;
+  padding: 7px 0;
+  border: 0;
+  background: transparent;
+  color: #c7c7d1;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-page__recent-search:hover {
+  color: #fff;
+}
+
+.search-page__recent-icon {
+  display: block;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  color: var(--search-subtle);
+}
+
+.search-page__recent-search span {
+  display: block;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-page__remove-recent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--search-subtle);
+  opacity: 0;
+  cursor: pointer;
+  transition:
+    opacity 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.search-page__remove-recent svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.search-page__recent-row:hover .search-page__remove-recent,
+.search-page__recent-row:focus-within .search-page__remove-recent {
+  opacity: 1;
+}
+
+.search-page__remove-recent:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.search-page__empty-recent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 15px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.search-page__empty-recent p {
+  margin: 0;
+  color: var(--search-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.search-page__empty-history-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--search-subtle);
+}
+
+/* =====================================================
+   TRENDING SEARCHES
+   ===================================================== */
+
+.search-page__trending-section {
+  margin-top: 34px;
+}
+
+.search-page__trending-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+  color: #c7b4ff;
+  font-size: 21px;
+}
+
+.search-page__section-description {
+  margin: -4px 0 16px;
+  color: var(--search-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.search-page__trending-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.search-page__trending-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  min-height: 80px;
+  padding: 14px;
+  border: 1px solid var(--search-border);
+  border-radius: 14px;
+  background: var(--search-panel);
+  color: var(--search-text);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.search-page__trending-card:hover {
+  border-color: var(--search-border-hover);
+  background: var(--search-panel-hover);
+  transform: translateY(-2px);
+}
+
+.search-page__trending-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #c9b8ff;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background 180ms ease;
+}
+
+.search-page__trending-card:hover .search-page__trending-icon {
+  background: rgba(139, 92, 246, 0.13);
+}
+
+.search-page__trending-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.search-page__trending-title {
+  display: block;
+  overflow: hidden;
+  color: #e6e6ed;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-page__trending-caption {
+  display: block;
+  color: var(--search-subtle);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.search-page__trending-arrow {
+  flex-shrink: 0;
+  color: var(--search-subtle);
+  font-size: 17px;
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.search-page__trending-card:hover .search-page__trending-arrow {
+  color: #c4afff;
+  transform: translateX(3px);
+}
+
+.search-page__trending-note {
+  margin: 13px 0 0;
+  color: var(--search-subtle);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+/* =====================================================
+   DISCOVERY NOTE
+   ===================================================== */
+
+.search-page__discovery-note {
+  margin-top: 30px;
+  padding: 17px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.search-page__discovery-title {
+  margin: 0;
+  color: #dddde5;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.search-page__discovery-description {
+  margin: 7px 0 0;
+  color: var(--search-subtle);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* =====================================================
+   RESULT FILTERS
+   ===================================================== */
+
+.search-page__filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 23px;
+}
+
+.search-page__filter {
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid var(--search-border);
+  border-radius: 999px;
+  background: #151517;
+  color: var(--search-muted);
+  font-size: 11px;
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.search-page__filter:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.search-page__filter--active {
+  border-color: rgba(167, 139, 250, 0.5);
+  background: var(--search-purple-bg);
+  color: #d7c8ff;
+}
+
+.search-page__filter--active:hover {
+  border-color: #b29bff;
+}
+
+.search-page__back-button {
+  min-height: 36px;
+  margin-left: auto;
+  padding: 8px 12px;
+  border: 1px solid var(--search-border);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--search-muted);
+  font-size: 11px;
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.search-page__back-button:hover {
+  border-color: rgba(167, 139, 250, 0.35);
+  background: rgba(139, 92, 246, 0.07);
+  color: #e1d6ff;
+}
+
+/* =====================================================
+   RESULTS HEADING
+   ===================================================== */
+
+.search-page__results-section {
+  margin-top: 31px;
+}
+
+.search-page__results-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.search-page__results-heading h2 {
+  margin: 0;
+  color: #eeeeF3;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.search-page__results-heading p {
+  margin: 7px 0 0;
+  color: var(--search-muted);
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.search-page__results-heading strong {
+  color: #d1c2ff;
+  font-weight: 600;
+}
+
+.search-page__results-count {
+  flex-shrink: 0;
+  padding-top: 2px;
+  color: var(--search-subtle);
+  font-size: 11px;
+}
+
+/* =====================================================
+   RESULT CARDS
+   ===================================================== */
+
+.search-page__results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.search-page__result-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--search-border);
+  border-radius: 14px;
+  background: var(--search-panel);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.search-page__result-card:hover {
+  border-color: var(--search-border-hover);
+  background: var(--search-panel-hover);
+  transform: translateY(-1px);
+}
+
+.search-page__result-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 41px;
+  height: 41px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #d2c2ff;
+}
+
+.search-page__result-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.search-page__result-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-page__result-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.search-page__result-title-row h3 {
+  margin: 0;
+  color: #eeeef4;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.search-page__category {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #b6b6c1;
+  font-size: 10px;
+}
+
+.search-page__result-preview {
+  margin: 8px 0 0;
+  color: var(--search-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.search-page__result-date {
+  margin: 10px 0 0;
+  color: var(--search-subtle);
+  font-size: 10px;
+}
+
+/* =====================================================
+   EMPTY RESULTS
+   ===================================================== */
+
+.search-page__no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  padding: 35px 22px;
+  border: 1px dashed rgba(255, 255, 255, 0.13);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.search-page__no-results-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--search-border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--search-muted);
+}
+
+.search-page__no-results-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.search-page__no-results h3 {
+  margin: 17px 0 0;
+  color: var(--search-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.search-page__no-results p {
+  max-width: 370px;
+  margin: 9px 0 0;
+  color: var(--search-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.search-page__back-button--empty {
+  margin-top: 19px;
+  margin-left: 0;
+}
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 760px) {
+  .omaxas-search-page {
+    padding: 27px 20px 40px;
+  }
+
+  .search-page__header {
+    margin-bottom: 23px;
+  }
+
+  .search-page__section {
+    margin-top: 29px;
+  }
+
+  .search-page__trending-grid {
+    gap: 10px;
+  }
+
+  .search-page__trending-card {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .search-page__trending-icon {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 520px) {
+  .omaxas-search-page {
+    padding: 22px 14px 32px;
+  }
+
+  .search-page__title {
+    font-size: 29px;
+  }
+
+  .search-page__description {
+    font-size: 13px;
+  }
+
+  .search-page__search-form {
+    gap: 8px;
+    min-height: 55px;
+    padding-left: 12px;
+    border-radius: 12px;
+  }
+
+  .search-page__search-icon {
+    width: 19px;
+    height: 19px;
+  }
+
+  .search-page__input {
+    font-size: 12px;
+  }
+
+  .search-page__submit-button {
+    min-height: 38px;
+    padding: 9px 11px;
+    font-size: 11px;
+  }
+
+  .search-page__clear-button {
+    padding: 6px;
+    font-size: 11px;
+  }
+
+  .search-page__section {
+    margin-top: 26px;
+  }
+
+  .search-page__heading-label h2 {
+    font-size: 14px;
+  }
+
+  .search-page__trending-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  .search-page__trending-card {
+    min-height: 72px;
+  }
+
+  .search-page__filters {
+    gap: 7px;
+  }
+
+  .search-page__filter {
+    padding: 8px 11px;
+  }
+
+  .search-page__back-button {
+    margin-left: 0;
+  }
+
+  .search-page__result-card {
+    gap: 10px;
+    padding: 13px;
+  }
+
+  .search-page__result-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .search-page__result-title-row h3 {
+    font-size: 12px;
+  }
+}
+
+/* Very small screens */
+
+@media (max-width: 360px) {
+  .omaxas-search-page {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .search-page__search-form {
+    gap: 6px;
+    padding-right: 6px;
+    padding-left: 9px;
+  }
+
+  .search-page__submit-button {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+
+  .search-page__trending-card {
+    padding: 10px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+  .omaxas-search-page *,
+  .omaxas-search-page *::before,
+  .omaxas-search-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+

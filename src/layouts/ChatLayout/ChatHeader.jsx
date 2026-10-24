@@ -206,7 +206,7 @@ export default function ChatHeader({
               onClick={handleSignup}
               className="chat-header-signup-button"
             >
-              Sign up for free
+              Sign up
             </button>
           </div>
         ) : (

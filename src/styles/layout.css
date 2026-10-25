@@ -1529,6 +1529,30 @@
   font-weight: 500;
 }
 
+/* =========================================
+   OMAXAS AI — RESPONSIVE MODEL SELECTOR
+   Mobile: Center
+   Laptop / Desktop: Normal side position
+========================================= */
+
+/* Default: laptop and desktop */
+.chat-topbar {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.chat-topbar .chat-header-model-selector {
+  position: static;
+  transform: none;
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  z-index: auto;
+}
+
 /* Auto Default / model selector without a rectangle */
 .chat-topbar .chat-header-model-selector > button {
   min-height: 0;
@@ -1540,6 +1564,7 @@
   box-shadow: none !important;
 
   font-size: 13px;
+  white-space: nowrap;
 }
 
 /* Keep a visible keyboard focus indicator */
@@ -1553,19 +1578,179 @@
   flex-shrink: 0;
 }
 
-/* Smaller screens */
+/* =========================================
+   MOBILE — CENTER OmaxasAI-auto
+========================================= */
+
 @media (max-width: 600px) {
   .chat-topbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
     padding: 0 10px;
     gap: 8px;
   }
 
+  /* Keep left and right controls at the edges */
   .chat-topbar .topbar-left,
   .chat-topbar .topbar-right {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
     gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Center selector relative to the screen */
+  .chat-topbar .chat-header-model-selector {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: max-content;
+    max-width: calc(100% - 112px);
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0;
+
+    z-index: 1;
+  }
+
+  .chat-topbar .chat-header-model-selector > button {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
   }
 }
 
+/* =========================================
+   OMAXAS AI — MOBILE MODEL SELECTOR CENTER
+========================================= */
+
+@media (max-width: 600px) {
+  .chat-topbar {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  /* Left-side controls */
+  .chat-topbar .topbar-left {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    z-index: 2;
+  }
+
+  /* OmaxasAI-auto — TRUE CENTER */
+  .chat-topbar .chat-header-model-selector {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    align-self: center;
+
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    width: max-content;
+    max-width: 42vw;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0;
+    z-index: 3;
+  }
+
+  .chat-topbar .chat-header-model-selector > button {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    padding: 4px 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 13px;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Right-side controls */
+  .chat-topbar .topbar-right {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    min-width: 0;
+    z-index: 2;
+  }
+
+  .chat-topbar .icon-button {
+    flex-shrink: 0;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 360px) {
+  .chat-topbar {
+    padding-right: 8px;
+    padding-left: 8px;
+    gap: 4px;
+  }
+
+  .chat-topbar .topbar-left,
+  .chat-topbar .topbar-right {
+    gap: 5px;
+  }
+
+  .chat-topbar .chat-header-model-selector {
+    max-width: 36vw;
+  }
+
+  .chat-topbar .chat-header-model-selector > button {
+    font-size: 11px;
+  }
+}
 
 /* Main composer container */
 .chat-composer {
@@ -3339,5 +3524,17 @@
   .chat-header-more-button,
   .chat-header-menu-item {
     transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .chat-topbar .chat-header-model-selector {
+    transform: translateX(-5px) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .chat-topbar .chat-header-model-selector {
+    transform: translateX(-45px) !important;
   }
 }

@@ -14,6 +14,7 @@ import {
   LogOut,
   RefreshCw,
   Trash2,
+  MoreVertical,
 } from "lucide-react";
 
 import omaxasLogo from "../../assets/Analysis output 1.png";
@@ -38,6 +39,8 @@ export default function MobileSidebar({
   const { user, logout } = useAuth();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [openMenuConversationId, setOpenMenuConversationId] =
+    useState(null);
 
   const displayName =
     user?.display_name ||
@@ -53,12 +56,16 @@ export default function MobileSidebar({
 
   // Lock background scrolling while the mobile drawer is open.
   useEffect(() => {
-    if (!isOpen) return undefined;
+    if (!isOpen) {
+      setOpenMenuConversationId(null);
+      return undefined;
+    }
 
     const previousOverflow = document.body.style.overflow;
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
+        setOpenMenuConversationId(null);
         onClose?.();
       }
     };
@@ -73,6 +80,7 @@ export default function MobileSidebar({
   }, [isOpen, onClose]);
 
   const closeDrawer = () => {
+    setOpenMenuConversationId(null);
     onClose?.();
   };
 
@@ -138,6 +146,7 @@ export default function MobileSidebar({
       return;
     }
 
+    setOpenMenuConversationId(null);
     closeDrawer();
     onSelectConversation(conversation);
   };
@@ -146,15 +155,31 @@ export default function MobileSidebar({
     event.preventDefault();
     event.stopPropagation();
 
+    setOpenMenuConversationId(null);
+
     if (
       guestMode ||
       loadingConversations ||
       typeof onDeleteConversation !== "function"
     ) {
+      if (typeof onDeleteConversation !== "function") {
+        onNotice?.("Delete conversation is not connected yet.");
+      }
       return;
     }
 
     onDeleteConversation(conversation);
+  };
+
+  const toggleConversationMenu = (event, rowKey) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (guestMode || loadingConversations) return;
+
+    setOpenMenuConversationId((currentId) =>
+      currentId === rowKey ? null : rowKey
+    );
   };
 
   const handleLogout = async () => {
@@ -196,6 +221,7 @@ export default function MobileSidebar({
 
   return (
     <div className="mobile-sidebar-root">
+      {/* Overlay */}
       {isOpen && (
         <button
           type="button"
@@ -205,6 +231,7 @@ export default function MobileSidebar({
         />
       )}
 
+      {/* Sidebar */}
       <aside
         className={`mobile-sidebar-panel ${
           isOpen ? "mobile-sidebar-panel-open" : ""
@@ -213,8 +240,8 @@ export default function MobileSidebar({
         aria-hidden={!isOpen}
         inert={!isOpen}
       >
-        {/* Header: centered OmaxasAI brand */}
-        <div className="">
+        {/* Header: centered OmaxasAI-auto */}
+        <div className="mobile-sidebar-header">
           <button
             type="button"
             className="mobile-sidebar-brand"
@@ -225,7 +252,9 @@ export default function MobileSidebar({
               <img src={omaxasLogo} alt="" />
             </span>
 
-            <span>OmaxasAI</span>
+            <span className="mobile-sidebar-brand-title">
+              OmaxasAI
+            </span>
           </button>
 
           <button
@@ -233,6 +262,7 @@ export default function MobileSidebar({
             className="mobile-sidebar-close"
             onClick={closeDrawer}
             aria-label="Close sidebar"
+            title="Close sidebar"
           >
             <X size={20} />
           </button>
@@ -381,17 +411,24 @@ export default function MobileSidebar({
                 const id = getConversationId(conversation);
                 const title = getConversationTitle(conversation);
 
+                const rowKey = id ?? `${title}-${index}`;
+                const menuId = `mobile-sidebar-chat-menu-${index}`;
+
                 const isActive =
                   activeConversationId != null &&
                   String(activeConversationId) === String(id);
+
+                const isMenuOpen =
+                  openMenuConversationId === rowKey;
 
                 return (
                   <div
                     className={`mobile-sidebar-history-row ${
                       isActive ? "mobile-sidebar-history-active" : ""
                     }`}
-                    key={id ?? `${title}-${index}`}
+                    key={rowKey}
                   >
+                    {/* Conversation title */}
                     <button
                       type="button"
                       className="mobile-sidebar-history-item"
@@ -402,25 +439,58 @@ export default function MobileSidebar({
                       title={title}
                     >
                       <MessageSquare size={16} />
+
                       <span>{title}</span>
                     </button>
 
+                    {/* Three-dot menu */}
                     <button
                       type="button"
-                      className="mobile-sidebar-delete"
-                      aria-label={`Delete chat: ${title}`}
-                      title="Delete conversation"
+                      className="mobile-sidebar-more"
+                      aria-label={`More options for ${title}`}
+                      aria-haspopup="menu"
+                      aria-expanded={isMenuOpen}
+                      aria-controls={menuId}
+                      title="Chat options"
                       disabled={
                         loadingConversations ||
                         id == null ||
                         guestMode
                       }
                       onClick={(event) =>
-                        handleDeleteConversation(event, conversation)
+                        toggleConversationMenu(event, rowKey)
                       }
                     >
-                      <Trash2 size={15} />
+                      <MoreVertical size={18} />
                     </button>
+
+                    {/* Dropdown: Delete */}
+                    {isMenuOpen && (
+                      <div
+                        id={menuId}
+                        className="mobile-sidebar-chat-menu"
+                        role="menu"
+                        aria-label={`Options for ${title}`}
+                      >
+                        <button
+                          type="button"
+                          className="mobile-sidebar-chat-menu-item mobile-sidebar-chat-menu-delete"
+                          role="menuitem"
+                          disabled={
+                            loadingConversations ||
+                            id == null ||
+                            guestMode ||
+                            typeof onDeleteConversation !== "function"
+                          }
+                          onClick={(event) =>
+                            handleDeleteConversation(event, conversation)
+                          }
+                        >
+                          <Trash2 size={16} />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -452,7 +522,7 @@ export default function MobileSidebar({
                   navigate("/register");
                 }}
               >
-                Sign up for free
+                Sign up
               </button>
             </>
           ) : (
@@ -477,6 +547,7 @@ export default function MobileSidebar({
                 <span>Settings</span>
               </button>
 
+              {/* Log out */}
               <button
                 type="button"
                 className="mobile-sidebar-nav-item mobile-sidebar-logout"

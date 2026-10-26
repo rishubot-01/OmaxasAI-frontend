@@ -829,17 +829,31 @@ export default function ChatLayout({ guestMode = false }) {
           </div>
         ) : isChatPage ? (
           <>
-            <ChatHeader
-              sidebarOpen={
-                isMobileViewport ? sidebarOpen : sidebarOpen
-              }
-              onOpenSidebar={handleOpenSidebar}
-              selectedModel={selectedModel}
-              onModelChange={handleModelChange}
-              onNotice={handleNotice}
-              disabled={loading}
-              guestMode={guestMode}
-            />
+
+<ChatHeader
+  sidebarOpen={sidebarOpen}
+  onOpenSidebar={handleOpenSidebar}
+  selectedModel={selectedModel}
+  onModelChange={handleModelChange}
+  onNotice={handleNotice}
+  disabled={loading}
+  guestMode={guestMode}
+  onDelete={() => {
+    const currentConversation = conversations.find(
+      (item) =>
+        String(getConversationId(item)) ===
+        String(activeConversationId)
+    );
+
+    if (!currentConversation) {
+      setNotice("Current conversation could not be found.");
+      return;
+    }
+
+    void handleDeleteConversation(currentConversation);
+  }}
+/>
+
 
             {notice && (
               <div

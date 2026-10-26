@@ -22,7 +22,7 @@ export default function ChatHeader({
   disabled = false,
   guestMode = false,
 
-  // Conversation actions supplied by the parent component
+  // Current conversation actions supplied by the parent.
   conversationTitle = "",
   isPinned = false,
   onShare,
@@ -45,7 +45,7 @@ export default function ChatHeader({
 
   // Close the menu when clicking outside or pressing Escape.
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen) return undefined;
 
     const handleOutsideClick = (event) => {
       if (!menuRef.current?.contains(event.target)) {
@@ -77,7 +77,7 @@ export default function ChatHeader({
     closeMenu();
 
     try {
-      if (onShare) {
+      if (typeof onShare === "function") {
         await onShare();
         return;
       }
@@ -121,7 +121,7 @@ export default function ChatHeader({
 
     if (trimmedTitle === conversationTitle) return;
 
-    if (onRename) {
+    if (typeof onRename === "function") {
       onRename(trimmedTitle);
     } else {
       onNotice?.(
@@ -133,7 +133,7 @@ export default function ChatHeader({
   const handlePin = () => {
     closeMenu();
 
-    if (onPin) {
+    if (typeof onPin === "function") {
       onPin(!isPinned);
     } else {
       onNotice?.(
@@ -145,7 +145,7 @@ export default function ChatHeader({
   const handleArchive = () => {
     closeMenu();
 
-    if (onArchive) {
+    if (typeof onArchive === "function") {
       onArchive();
     } else {
       onNotice?.(
@@ -154,22 +154,18 @@ export default function ChatHeader({
     }
   };
 
+  // Let the parent handle confirmation, API deletion, and UI updates.
   const handleDelete = () => {
     closeMenu();
 
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this conversation? This action may not be reversible."
-    );
-
-    if (!confirmed) return;
-
-    if (onDelete) {
-      onDelete();
-    } else {
+    if (typeof onDelete !== "function") {
       onNotice?.(
         "Delete needs to be connected to your conversation handler."
       );
+      return;
     }
+
+    onDelete();
   };
 
   return (
@@ -286,6 +282,7 @@ export default function ChatHeader({
                     className="chat-header-menu-item chat-header-menu-item-danger"
                     role="menuitem"
                     onClick={handleDelete}
+                    disabled={disabled}
                   >
                     <Trash2 size={17} />
                     <span>Delete</span>

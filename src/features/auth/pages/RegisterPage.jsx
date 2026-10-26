@@ -1,3 +1,4 @@
+
 import {
   useCallback,
   useEffect,
@@ -107,10 +108,14 @@ export default function RegisterPage() {
   googleCredentialHandlerRef.current =
     handleGoogleCredential;
 
-  // Load Google Identity Services and render its official button.
+  // Load Google Identity Services and render a responsive button.
   useEffect(() => {
     let cancelled = false;
     let script = null;
+    let resizeObserver = null;
+    let resizeHandler = null;
+    let resizeFrame = null;
+    let lastRenderedWidth = null;
 
     if (!GOOGLE_CLIENT_ID) {
       setGoogleNotice(
@@ -129,37 +134,73 @@ export default function RegisterPage() {
         return;
       }
 
+      const container = googleButtonRef.current;
       const googleIdentity = window.google.accounts.id;
 
+      const availableWidth = Math.floor(
+        container.getBoundingClientRect().width
+      );
+
+      // Wait until the container has a measurable width.
+      if (availableWidth <= 0) {
+        return;
+      }
+
+      // Google Identity Services supports widths from 200px to 400px.
+      const buttonWidth = Math.min(
+        400,
+        Math.max(200, availableWidth)
+      );
+
+      // Avoid repeatedly replacing the button at the same width.
+      if (
+        lastRenderedWidth === buttonWidth &&
+        container.childElementCount > 0
+      ) {
+        return;
+      }
+
+      // Initialize Google Identity Services.
       googleIdentity.initialize({
         client_id: GOOGLE_CLIENT_ID,
 
         callback: (response) => {
-          const credential = response?.credential;
-
           googleCredentialHandlerRef.current?.(
-            credential
+            response?.credential
           );
         },
       });
 
-      // Avoid rendering duplicate buttons.
-      googleButtonRef.current.replaceChildren();
+      // Remove the previous button before rendering another.
+      container.replaceChildren();
 
-      googleIdentity.renderButton(
-        googleButtonRef.current,
-        {
-          type: "standard",
-          theme: "outline",
-          size: "large",
-          text: "continue_with",
-          shape: "rectangular",
-          logo_alignment: "left",
-          width: 320,
-        }
-      );
+      googleIdentity.renderButton(container, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        text: "continue_with",
+        shape: "rectangular",
+        logo_alignment: "left",
+        width: buttonWidth,
+      });
 
+      lastRenderedWidth = buttonWidth;
       setGoogleNotice("");
+    }
+
+    function scheduleButtonRender() {
+      if (cancelled) {
+        return;
+      }
+
+      if (resizeFrame !== null) {
+        window.cancelAnimationFrame(resizeFrame);
+      }
+
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = null;
+        renderGoogleButton();
+      });
     }
 
     function handleScriptError() {
@@ -170,8 +211,31 @@ export default function RegisterPage() {
       }
     }
 
-    if (window.google?.accounts?.id) {
+    function setupResponsiveButton() {
+      if (cancelled || !googleButtonRef.current) {
+        return;
+      }
+
+      if ("ResizeObserver" in window) {
+        resizeObserver = new ResizeObserver(() => {
+          scheduleButtonRender();
+        });
+
+        resizeObserver.observe(googleButtonRef.current);
+      } else {
+        resizeHandler = scheduleButtonRender;
+
+        window.addEventListener(
+          "resize",
+          resizeHandler
+        );
+      }
+
       renderGoogleButton();
+    }
+
+    if (window.google?.accounts?.id) {
+      setupResponsiveButton();
     } else {
       script = document.querySelector(
         'script[src="https://accounts.google.com/gsi/client"]'
@@ -185,8 +249,15 @@ export default function RegisterPage() {
         script.defer = true;
       }
 
-      script.addEventListener("load", renderGoogleButton);
-      script.addEventListener("error", handleScriptError);
+      script.addEventListener(
+        "load",
+        setupResponsiveButton
+      );
+
+      script.addEventListener(
+        "error",
+        handleScriptError
+      );
 
       if (!script.isConnected) {
         document.head.appendChild(script);
@@ -196,10 +267,25 @@ export default function RegisterPage() {
     return () => {
       cancelled = true;
 
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+
+      if (resizeHandler) {
+        window.removeEventListener(
+          "resize",
+          resizeHandler
+        );
+      }
+
+      if (resizeFrame !== null) {
+        window.cancelAnimationFrame(resizeFrame);
+      }
+
       if (script) {
         script.removeEventListener(
           "load",
-          renderGoogleButton
+          setupResponsiveButton
         );
 
         script.removeEventListener(
@@ -213,7 +299,7 @@ export default function RegisterPage() {
   return (
     <main className="auth-page">
       <section className="auth-card">
-        {/* Animated OMAXAS AI logo and centered heading */}
+        {/* OMAXAS AI logo and heading */}
         <div className="auth-brand-header">
           <Link
             to="/"
@@ -234,7 +320,7 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Google sign-up option */}
+        {/* Responsive Google sign-up option */}
         <div className="auth-google-section">
           {GOOGLE_CLIENT_ID ? (
             <div
@@ -260,18 +346,19 @@ export default function RegisterPage() {
             </p>
           )}
 
+          {/* Centered OR divider */}
           <div className="auth-google-divider">
-            <span />
+            <span className="auth-google-divider__line" />
 
             <span className="auth-google-divider__label">
               OR
             </span>
 
-            <span />
+            <span className="auth-google-divider__line" />
           </div>
         </div>
 
-        {/* Existing email/password registration */}
+        {/* Email/password registration */}
         <form
           onSubmit={handleSubmit}
           className="auth-form"
@@ -368,9 +455,7 @@ export default function RegisterPage() {
             type="submit"
             disabled={submitting}
           >
-            {submitting
-              ? "Signing up..."
-              : "Sign up"}
+            {submitting ? "Signing up..." : "Sign up"}
           </button>
         </form>
 

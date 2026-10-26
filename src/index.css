@@ -159,3 +159,32 @@ button:disabled {
     transition: none;
   }
 }
+
+
+
+/* Mobile viewport layout */
+.chat-layout {
+  height: 100dvh;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Messages should scroll independently */
+.chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Composer stays at the bottom of the chat */
+.chat-composer {
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: #080808;
+}

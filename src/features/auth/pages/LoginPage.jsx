@@ -1,3 +1,4 @@
+
 import {
   useEffect,
   useRef,
@@ -19,8 +20,7 @@ const GOOGLE_CLIENT_ID = (
   import.meta.env.VITE_GOOGLE_CLIENT_ID || ""
 ).trim();
 
-// Keep Google's initialization page-wide and avoid initializing
-// the same client repeatedly when navigating between auth pages.
+// Keep Google's initialization page-wide.
 let initializedGoogleClientId = null;
 let activeGoogleCredentialHandler = null;
 
@@ -69,8 +69,7 @@ export default function LoginPage() {
     }
   }
 
-  // Keep the latest React callbacks available to Google's
-  // asynchronous credential callback.
+  // Keep the latest callback available to Google.
   googleFlowRef.current = async (credential) => {
     if (submitting) {
       return;
@@ -99,9 +98,13 @@ export default function LoginPage() {
     }
   };
 
-  // Load Google Identity Services and render Google's official button.
+  // Load Google Identity Services and render a responsive button.
   useEffect(() => {
     let cancelled = false;
+    let resizeObserver;
+    let resizeFrame = null;
+    let script = null;
+    let resizeHandler;
 
     const credentialHandler = (credential) => {
       googleFlowRef.current?.(credential);
@@ -125,9 +128,9 @@ export default function LoginPage() {
       }
 
       const googleIdentity = window.google.accounts.id;
+      const container = googleButtonRef.current;
 
-      // Initialize only when this page's Client ID has not
-      // already been initialized in this frontend session.
+      // Initialize Google only once per Client ID.
       if (initializedGoogleClientId !== GOOGLE_CLIENT_ID) {
         googleIdentity.initialize({
           client_id: GOOGLE_CLIENT_ID,
@@ -151,23 +154,51 @@ export default function LoginPage() {
 
       activeGoogleCredentialHandler = credentialHandler;
 
-      // Prevent duplicate buttons if the component is remounted.
-      googleButtonRef.current.replaceChildren();
-
-      googleIdentity.renderButton(
-        googleButtonRef.current,
-        {
-          type: "standard",
-          theme: "outline",
-          size: "large",
-          text: "continue_with",
-          shape: "rectangular",
-          logo_alignment: "left",
-          width: 320,
-        }
+      // Use the actual available container width.
+      const availableWidth = Math.floor(
+        container.getBoundingClientRect().width
       );
 
+      if (availableWidth <= 0) {
+        return;
+      }
+
+      // Google Identity Services supports button widths
+      // from 200px to 400px.
+      const buttonWidth = Math.min(
+        400,
+        Math.max(200, availableWidth)
+      );
+
+      // Avoid duplicate buttons on resize or remount.
+      container.replaceChildren();
+
+      googleIdentity.renderButton(container, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        text: "continue_with",
+        shape: "rectangular",
+        logo_alignment: "left",
+        width: buttonWidth,
+      });
+
       setGoogleNotice("");
+    }
+
+    function scheduleButtonRender() {
+      if (cancelled) {
+        return;
+      }
+
+      if (resizeFrame !== null) {
+        window.cancelAnimationFrame(resizeFrame);
+      }
+
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = null;
+        renderGoogleButton();
+      });
     }
 
     function handleGoogleScriptError() {
@@ -178,16 +209,32 @@ export default function LoginPage() {
       }
     }
 
-    if (window.google?.accounts?.id) {
+    function setupResponsiveButton() {
+      if (cancelled || !googleButtonRef.current) {
+        return;
+      }
+
+      // Observe the available width on mobile and desktop.
+      if ("ResizeObserver" in window) {
+        resizeObserver = new ResizeObserver(() => {
+          scheduleButtonRender();
+        });
+
+        resizeObserver.observe(googleButtonRef.current);
+      } else {
+        resizeHandler = scheduleButtonRender;
+        window.addEventListener("resize", resizeHandler);
+      }
+
       renderGoogleButton();
+    }
+
+    if (window.google?.accounts?.id) {
+      setupResponsiveButton();
     } else {
-      let script = document.querySelector(
+      script = document.querySelector(
         'script[src="https://accounts.google.com/gsi/client"]'
       );
-
-      const handleGoogleScriptLoad = () => {
-        renderGoogleButton();
-      };
 
       if (!script) {
         script = document.createElement("script");
@@ -198,7 +245,7 @@ export default function LoginPage() {
 
       script.addEventListener(
         "load",
-        handleGoogleScriptLoad
+        setupResponsiveButton
       );
 
       script.addEventListener(
@@ -209,30 +256,34 @@ export default function LoginPage() {
       if (!script.isConnected) {
         document.head.appendChild(script);
       }
+    }
 
-      return () => {
-        cancelled = true;
+    return () => {
+      cancelled = true;
 
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+
+      if (resizeHandler) {
+        window.removeEventListener("resize", resizeHandler);
+      }
+
+      if (resizeFrame !== null) {
+        window.cancelAnimationFrame(resizeFrame);
+      }
+
+      if (script) {
         script.removeEventListener(
           "load",
-          handleGoogleScriptLoad
+          setupResponsiveButton
         );
 
         script.removeEventListener(
           "error",
           handleGoogleScriptError
         );
-
-        if (
-          activeGoogleCredentialHandler === credentialHandler
-        ) {
-          activeGoogleCredentialHandler = null;
-        }
-      };
-    }
-
-    return () => {
-      cancelled = true;
+      }
 
       if (
         activeGoogleCredentialHandler === credentialHandler
@@ -245,7 +296,7 @@ export default function LoginPage() {
   return (
     <main className="auth-page">
       <section className="auth-card">
-        {/* Centered, animated OMAXAS AI logo */}
+        {/* Centered OMAXAS AI logo */}
         <div className="auth-brand-header">
           <Link
             to="/"
@@ -266,7 +317,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Google sign-in section */}
+        {/* Responsive Google sign-in section */}
         <div className="auth-google-section">
           {GOOGLE_CLIENT_ID ? (
             <div
@@ -292,16 +343,19 @@ export default function LoginPage() {
             </p>
           )}
 
+          {/* Centered OR divider */}
           <div className="auth-google-divider">
-            <span />
+            <span className="auth-google-divider__line" />
+
             <span className="auth-google-divider__label">
               OR
             </span>
-            <span />
+
+            <span className="auth-google-divider__line" />
           </div>
         </div>
 
-        {/* Existing email/password login */}
+        {/* Email/password login */}
         <form
           onSubmit={handleSubmit}
           className="auth-form"

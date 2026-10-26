@@ -1143,7 +1143,7 @@
 }
 
 .composer-area {
-  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  padding-bottom: max(2px, env(safe-area-inset-bottom, 0px));
   margin-top: 0;
   transform: translateY(-42px);
 }

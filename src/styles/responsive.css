@@ -188,22 +188,35 @@
     overflow-wrap: anywhere;
   }
 
+
   .composer-area {
-    padding: 0 max(12px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px));
+    flex-shrink: 0;
+    width: 100%;
+    padding:
+      0
+      max(12px, env(safe-area-inset-left, 0px))
+      max(12px, env(safe-area-inset-bottom, 0px))
+      max(12px, env(safe-area-inset-right, 0px));
     box-sizing: border-box;
   }
 
   .composer {
+    width: 100%;
     min-width: 0;
+    max-width: 100%;
     padding: 11px 10px 9px;
     border-radius: 18px;
+    box-sizing: border-box;
   }
 
   .composer textarea {
+    min-width: 0;
     min-height: 55px;
     max-height: min(30dvh, 220px);
     font-size: 14px;
+    box-sizing: border-box;
   }
+
 
   .feature-button {
     gap: 5px;
@@ -259,9 +272,10 @@
   }
 }
 
+
 /* Mid-sized and small phones */
 @media (max-width: 480px) {
-  /* Login / Sign-up card: keep it centered and usable on phones. */
+  /* Login / Sign-up card */
   .auth-card {
     width: min(440px, calc(100% - 28px));
     max-width: 100%;
@@ -270,7 +284,14 @@
     margin-right: auto;
     padding: clamp(20px, 5vw, 26px) clamp(16px, 4.5vw, 22px);
     box-sizing: border-box;
-    max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+
+    max-height: calc(
+      100dvh
+      - 32px
+      - env(safe-area-inset-top, 0px)
+      - env(safe-area-inset-bottom, 0px)
+    );
+
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -291,30 +312,56 @@
     max-width: 100%;
   }
 
+  /* Chat home header */
   .chat-home-header {
     padding: 12px clamp(12px, 4vw, 16px);
   }
 
+  /* Welcome content spacing */
   .chat-home-content {
     margin-top: clamp(52px, 13vw, 64px);
+    min-width: 0;
+    box-sizing: border-box;
   }
 
-  .chat-composer {
-    padding: clamp(9px, 3vw, 12px);
-  }
 
-  .chat-composer-toolbar {
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+/* Chat composer */
+.chat-composer {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: clamp(9px, 3vw, 12px);
+  box-sizing: border-box;
+}
+
+
+
+/* Composer toolbar */
+.chat-composer-toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  flex-shrink: 0;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
 
   .message-list {
     padding: 18px clamp(10px, 3.5vw, 12px);
   }
 
   .message-row {
-    gap: 9px;
+    gap: 7px;
     min-width: 0;
   }
 
@@ -1093,4 +1140,46 @@
 .google-login-container button {
   max-width: 100%;
   box-sizing: border-box;
+}
+
+
+/* =========================================
+   MOBILE ONLY — KEEP CHAT COMPOSER AT BOTTOM
+   Desktop / Laptop styles remain unchanged
+========================================= */
+@media (max-width: 600px) {
+  .app-shell {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .main-panel {
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .conversation-area {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  .composer-area {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .composer {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 }
